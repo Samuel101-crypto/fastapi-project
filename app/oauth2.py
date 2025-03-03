@@ -46,6 +46,7 @@ def get_current_user(token:str = Depends(oauth_schema), session: Session = Depen
     
     token = verify_token(token, credentials_exception)
 
-    user = session.get(models.User, token.id)
 
+    user = session.get(models.User, token.id)
+    print(user)
     return user

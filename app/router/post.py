@@ -31,12 +31,12 @@ def get_specific_post(id:int, session: Session = Depends(get_session)):
     return post
 
 @router.delete("/{id:int}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id, user_credentials = Depends(oauth2.get_current_user),session: Session = Depends(get_session)):
+def delete_post(id,session: Session = Depends(get_session),  user_credentials = Depends(oauth2.get_current_user)):
     post = session.get(models.Posts, id)    
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"There is no content with an id of {id}")
-    # if post.user_id != user_credentials.id:
-    #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authorized to perform this action!")
+    if post.user_id != user_credentials.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to perform this action!")
     
     session.delete(post)
     session.commit()
